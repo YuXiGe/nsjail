@@ -35,6 +35,48 @@ Features:
   - [x]  It's __rock-solid__.
 
 ***
+### Make: Create a statically linked binary.
+Needs \
+make
+gcc or clang
+libprotobuf-dev
+protobuf-compiler
+libnl-3-dev
+libnl-route-3-dev
+bison
+flex
+
+```shell
+sudo apt-get update && sudo apt-get install -y make gcc flex bison libprotobuf-dev protobuf-compiler libnl-3-dev libnl-route-3-dev
+```
+#### The Makefile here has already been modified to create a statically linked binary.
+change an original Makefile.
+```shell
+# Modify protobuf & libnl for static build.
+# Makefile:34-36
+LDFLAGS += -static -pie -Wl,-z,noexecstack -lpthread \  
+    -lprotobuf -lnl-route-3 -lnl-3 -lz -lm
+```
+
+```shell
+# Add flag to pkg-config for static build. 
+LDFLAGS += $(shell pkg-config --libs --static protobuf)  
+LDFLAGS += $(shell pkg-config --libs --static libnl-route-3.0)
+```
+```shell
+make STATIC=1
+
+## check if nsjail is static
+ldd nsjail
+
+# this command will reply
+> not a dynamic executable
+
+# ok, here we go.
+```
+
+
+***
 ### What forms of isolation does it provide
 1. Linux __namespaces__: UTS (hostname), MOUNT (chroot), PID (separate PID tree), IPC, NET (separate networking context), USER, CGROUPS
 2. __FS constraints__: chroot(), pivot_root(), RO-remounting, custom ```/proc``` and ```tmpfs``` mount points

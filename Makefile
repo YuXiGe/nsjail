@@ -32,8 +32,9 @@ COMMON_FLAGS += -O2 -c \
 	-Ikafel/include
 
 CXXFLAGS += $(USER_DEFINES) $(COMMON_FLAGS) $(shell pkg-config --cflags protobuf) \
-	-std=c++20 -fno-exceptions -Wno-unused -Wno-unused-parameter
-LDFLAGS += -pie -Wl,-z,noexecstack -lpthread $(shell pkg-config --libs protobuf)
+	-std=c++2a -fno-exceptions -Wno-unused -Wno-unused-parameter
+# LDFLAGS += -pie -Wl,-z,noexecstack -lpthread $(shell pkg-config --libs protobuf)
+LDFLAGS += -static -pie -Wl,-z,noexecstack -lpthread -lprotobuf -lnl-route-3 -lnl-3 -lz -lm
 
 BIN = nsjail
 LIBS = kafel/libkafel.a
@@ -52,7 +53,8 @@ endif
 NL3_EXISTS := $(shell pkg-config --exists libnl-route-3.0 && echo yes)
 ifeq ($(NL3_EXISTS), yes)
 	CXXFLAGS += $(shell pkg-config --cflags libnl-route-3.0)
-	LDFLAGS += $(shell pkg-config --libs libnl-route-3.0)
+	LDFLAGS += $(shell pkg-config --libs --static protobuf)
+	LDFLAGS += $(shell pkg-config --libs --static libnl-route-3.0)
 endif
 
 .PHONY: all clean depend indent
