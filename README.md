@@ -57,6 +57,12 @@ change an original Makefile.
 LDFLAGS += -static -pie -Wl,-z,noexecstack -lpthread \  
     -lprotobuf -lnl-route-3 -lnl-3 -lz -lm
 ```
+default c++ compiler settings is for c++20, if you'll have not one.
+```shell
+# change c++20 to c++2a
+CXXFLAGS += $(USER_DEFINES) $(COMMON_FLAGS) $(shell pkg-config --cflags protobuf) \
+	-std=c++2a -fno-exceptions -Wno-unused -Wno-unused-parameter
+```
 
 ```shell
 # Add flag to pkg-config for static build. 
